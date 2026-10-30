@@ -2,7 +2,7 @@
 Jauge Claude - icône dans la zone de notification Windows.
 
 Reçoit les chiffres envoyés par le script Tampermonkey « Claude – jauge d'utilisation »
-(v1.2 ou plus) et les affiche dans une icône près de l'horloge.
+(v2.0 ou plus) et les affiche dans une icône près de l'horloge.
 
 - L'icône montre le pourcentage le plus élevé (session ou semaine) et sa couleur :
   vert < 70 %, orange 70-89 %, rouge >= 90 %, gris si plus de nouvelles depuis 20 min.

@@ -4,7 +4,7 @@ Affiche en permanence votre consommation Claude (session 5 h et semaine), avec a
 
 Deux parties, indépendantes :
 
-- **`claude-usage-badge.user.js`** : script Tampermonkey (Chrome ou Edge). Affiche la jauge en bas à droite de claude.ai et envoie les chiffres à l'icône Windows.
+- **`claude-usage-badge.user.js`** : script Tampermonkey (Chrome ou Edge). Affiche la jauge en bas à droite de claude.ai (uniquement sur ce site) et envoie les chiffres à l'icône Windows.
 - **`jauge_claude.pyw`** + **`installer.bat`** (optionnel) : pastille colorée dans la zone de notification Windows, près de l'horloge.
 
 ## Installation

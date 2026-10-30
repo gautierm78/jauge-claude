@@ -34,5 +34,5 @@ start "" pythonw "%SCRIPT%"
 echo.
 echo Termine. Une pastille grise "?" apparait pres de l'horloge
 echo ^(cliquez sur la fleche ^ si elle est masquee^).
-echo Elle prend ses couleurs des que la jauge Tampermonkey v1.2 envoie les chiffres.
+echo Elle prend ses couleurs des que la jauge Tampermonkey v2.0 envoie les chiffres.
 pause
