@@ -9,7 +9,7 @@ Deux parties, indépendantes :
 
 ## Installation
 
-Le guide pas à pas est dans [`guide-installation.md`](guide-installation.md).
+Le guide pas à pas est dans [`guide-installation.md`](guide-installation.md). Une version PDF imprimable est disponible : [`docs/mode-emploi-jauge-claude.pdf`](docs/mode-emploi-jauge-claude.pdf).
 
 1. Installer Tampermonkey, autoriser les scripts utilisateur, coller `claude-usage-badge.user.js`.
 2. Pour l'icône Windows : installer Python 3.12 (Microsoft Store), puis lancer `installer.bat`.
