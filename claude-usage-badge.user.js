@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Claude – jauge d'utilisation
 // @namespace    madoe.fr
-// @version      1.4
+// @version      2.0
 // @description  Affiche en permanence l'utilisation Claude (session 5 h + semaine) et alerte à 70 % / 90 %.
-// @match        *://*/*
+// @match        https://claude.ai/*
 // @noframes
 // @connect      claude.ai
 // @connect      127.0.0.1
@@ -26,22 +26,7 @@
   // -------------------------------------------------------------------------
 
   const API = 'https://claude.ai/api';
-  const K_DATA = 'usage_data', K_ORG = 'org_id', K_NOTIF = 'notified';
-  const K_PARTOUT = 'show_everywhere', K_SITES = 'sites_on', K_OFF = 'sites_off';
-  const SITE = location.hostname;
-
-  // Où afficher la jauge ? Par défaut : seulement sur claude.ai.
-  // Les alertes Windows, elles, fonctionnent sur tous les sites.
-  function visibleIci() {
-    if (GM_getValue(K_OFF, []).includes(SITE)) return false;
-    if (SITE === 'claude.ai' || SITE.endsWith('.claude.ai')) return true;
-    return GM_getValue(K_PARTOUT, false) || GM_getValue(K_SITES, []).includes(SITE);
-  }
-  function basculer(cle, actif) {
-    const l = GM_getValue(cle, []).filter(s => s !== SITE);
-    if (actif) l.push(SITE);
-    GM_setValue(cle, l);
-  }
+  const K_DATA = 'usage_data', K_ORG = 'org_id', K_NOTIF = 'notified', K_EN_COURS = 'en_cours';
 
   function get(url) {
     return new Promise((resolve, reject) => {
@@ -76,8 +61,8 @@
     const cache = GM_getValue(K_DATA, null);
     if (!force && cache && Date.now() - cache.at < INTERVALLE_MIN * 60e3 - 5e3) return render(cache);
     // Un seul onglet interroge claude.ai à la fois (évite les doublons d'alertes).
-    if (!force && Date.now() - GM_getValue('en_cours', 0) < 30e3) return cache && render(cache);
-    GM_setValue('en_cours', Date.now());
+    if (!force && Date.now() - GM_getValue(K_EN_COURS, 0) < 30e3) return cache && render(cache);
+    GM_setValue(K_EN_COURS, Date.now());
     try {
       const u = await fetchUsage();
       const data = {
@@ -145,7 +130,6 @@
   // ---- Affichage ----------------------------------------------------------
   let host;
   function render(d) {
-    if (!visibleIci()) { host && host.remove(); host = null; return; }
     if (!host) {
       host = document.createElement('div');
       host.attachShadow({ mode: 'open' });
@@ -184,19 +168,6 @@
     const d = GM_getValue(K_DATA, null);
     if (d && d.session) envoyerIcone(d, true);
     else GM_notification({ title: 'Jauge Claude', text: 'Pas encore de chiffres : ouvrez claude.ai puis réessayez.', timeout: 8000 });
-  });
-  GM_registerMenuCommand(`Afficher / masquer sur ${SITE}`, () => {
-    const vis = visibleIci();
-    basculer(K_OFF, vis);          // masquer ici
-    basculer(K_SITES, !vis);       // ou afficher ici
-    refresh();
-  });
-  GM_registerMenuCommand('Afficher partout / seulement sur claude.ai', () => {
-    const p = !GM_getValue(K_PARTOUT, false);
-    GM_setValue(K_PARTOUT, p);
-    if (p) GM_setValue(K_OFF, []);  // repartir propre
-    else GM_setValue(K_SITES, []);
-    refresh();
   });
   GM_addValueChangeListener(K_DATA, (k, o, n, remote) => remote && n && render(n));
 
