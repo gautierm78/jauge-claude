@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Claude – jauge d'utilisation
 // @namespace    madoe.fr
-// @version      2.0
+// @version      2.1
 // @description  Affiche en permanence l'utilisation Claude (session 5 h + semaine) et alerte à 70 % / 90 %.
-// @match        https://claude.ai/*
+// @match        *://*/*
 // @noframes
 // @connect      claude.ai
 // @connect      127.0.0.1
@@ -26,6 +26,8 @@
   // -------------------------------------------------------------------------
 
   const API = 'https://claude.ai/api';
+  // La jauge ne s'affiche que sur claude.ai ; le reste (alertes, icône Windows) tourne sur tout site.
+  const AFFICHER_ICI = location.hostname === 'claude.ai' || location.hostname.endsWith('.claude.ai');
   const K_DATA = 'usage_data', K_ORG = 'org_id', K_NOTIF = 'notified', K_EN_COURS = 'en_cours';
 
   function get(url) {
@@ -130,6 +132,7 @@
   // ---- Affichage ----------------------------------------------------------
   let host;
   function render(d) {
+    if (!AFFICHER_ICI) return;
     if (!host) {
       host = document.createElement('div');
       host.attachShadow({ mode: 'open' });
