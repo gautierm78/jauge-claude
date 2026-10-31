@@ -63,7 +63,7 @@ Une notification Windows arrive une seule fois à 70 % et une seule fois à 90 %
 - **Clic sur la jauge** : ouvre la page officielle Paramètres → Utilisation de Claude.
 - **Clic droit sur la jauge** : actualise tout de suite.
 
-La jauge n'apparaît que sur claude.ai : le script ne s'exécute pas ailleurs. Les alertes Windows demandent donc qu'un onglet claude.ai reste ouvert.
+La jauge n'apparaît que sur claude.ai. Le script travaille en revanche sur tous les sites : tant qu'un onglet du navigateur est ouvert, les alertes Windows et l'icône restent à jour.
 
 ## Option : l'icône Windows
 
@@ -73,7 +73,7 @@ Le script Tampermonkey continue de lire les chiffres et les transmet à un petit
 
 **Installation**
 
-1. Vérifiez que le script Tampermonkey est en **version 2.0 ou plus** (colonne Version du tableau de bord). Sinon, mettez-le à jour (voir **Mettre à jour ou désinstaller**).
+1. Vérifiez que le script Tampermonkey est en **version 2.1 ou plus** (colonne Version du tableau de bord). Sinon, mettez-le à jour (voir **Mettre à jour ou désinstaller**).
 2. Installez **Python 3.12** depuis le Microsoft Store, s'il n'est pas déjà présent.
 3. Téléchargez le dépôt (bouton **Code → Download ZIP**) et extrayez-le dans un dossier qui ne bougera plus, par exemple `C:\Outils\JaugeClaude`.
 4. Double-cliquez sur `installer.bat`. Si Windows affiche « Windows a protégé votre ordinateur », cliquez sur **Informations complémentaires**, puis **Exécuter quand même**. Le programme s'installe, se lance et démarrera avec Windows.
