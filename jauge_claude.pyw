@@ -304,4 +304,16 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception:  # pythonw n'a pas de console : on garde la trace et on prévient
+        import traceback
+        DOSSIER.mkdir(parents=True, exist_ok=True)
+        (DOSSIER / "erreur.txt").write_text(traceback.format_exc(), encoding="utf-8")
+        try:
+            import ctypes
+            ctypes.windll.user32.MessageBoxW(
+                None, f"La Jauge Claude n'a pas pu démarrer.\nDétail : {DOSSIER / 'erreur.txt'}", "Jauge Claude", 0x10)
+        except Exception:
+            pass
+        raise
