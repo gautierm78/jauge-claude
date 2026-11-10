@@ -20,7 +20,7 @@ La jauge prend la forme d'une pastille colorée dans la zone de notification Win
 ## Installation pas à pas
 
 1. **Installer Python.** Ouvrez le Microsoft Store, cherchez « Python 3.12 », cliquez sur **Obtenir**.
-2. **Télécharger la jauge.** Sur la [page GitHub](https://github.com/gautierm78/jauge-claude), bouton vert **Code** > **Download ZIP**. Décompressez le dossier à un endroit où il restera (par exemple `Documents\jauge-claude`) : le démarrage automatique pointe vers ce dossier.
+2. **Télécharger la jauge.** Téléchargez le fichier `JaugeClaude.zip` et décompressez-le (clic droit > Extraire tout). Le programme est copié dans `%LOCALAPPDATA%\JaugeClaude` : le dossier téléchargé peut ensuite être supprimé.
 3. **Lancer `installer.bat`** (double-clic). Il installe les composants, ajoute la jauge au démarrage de Windows et la lance.
 4. **Se connecter une fois.** Une fenêtre « Jauge Claude – connexion à claude.ai » s'ouvre au premier lancement (si elle ne s'ouvre pas : clic droit sur la pastille > **Afficher la fenêtre claude.ai**). Connectez-vous comme d'habitude, puis fermez la fenêtre avec la croix : elle se cache, l'application continue.
 5. **Vérifier.** Après quelques secondes, la pastille prend sa couleur et affiche votre pourcentage. Cliquez sur la flèche ^ près de l'horloge si elle est masquée ; vous pouvez la glisser à côté de l'horloge pour la garder visible.
