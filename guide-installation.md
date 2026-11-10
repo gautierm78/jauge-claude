@@ -2,7 +2,7 @@
 
 ## À quoi ça sert
 
-Claude impose deux limites d'utilisation : une **session** de 5 heures et un plafond sur **7 jours**. La Jauge Claude affiche en permanence où vous en êtes, sous forme d'une pastille colorée près de l'horloge, et vous prévient à 70 % et 90 %.
+Claude impose deux limites d'utilisation : une **session** de 5 heures et un plafond sur **7 jours**. La Jauge Claude affiche en permanence où vous en êtes, sous forme d'une étoile colorée près de l'horloge, et vous prévient à 50 % et 85 %.
 
 ## Installer
 
@@ -20,16 +20,16 @@ L'application se lance ensuite toute seule à chaque démarrage de Windows.
 
 | Couleur | Niveau | Ce que ça veut dire |
 | --- | --- | --- |
-| Vert | moins de 70 % | Tout va bien. |
-| Orange | 70 à 89 % | Gardez les grosses tâches pour après la remise à zéro. |
-| Rouge | 90 % et plus | Blocage proche. |
+| Vert | moins de 50 % | Tout va bien. |
+| Orange | 50 à 84 % | Gardez les grosses tâches pour après la remise à zéro. |
+| Rouge | 85 % et plus | Blocage proche. |
 | Gris | — | Pas de chiffres depuis 20 min (pas de réseau, ou déconnecté). |
 
 - **Survol** : détail session / semaine et heures de remise à zéro.
 - **Double-clic** : ouvre la page Utilisation de claude.ai dans votre navigateur.
 - **Clic droit** : *Actualiser maintenant*, *Afficher la fenêtre claude.ai* (pour se reconnecter), *Lancer au démarrage de Windows* (case à cocher), *Quitter*.
 
-Une notification arrive une seule fois à 70 % et une seule fois à 90 %, pour la session comme pour la semaine.
+Une notification arrive une seule fois à 50 % et une seule fois à 85 %, pour la session comme pour la semaine.
 
 ## Mettre à jour
 

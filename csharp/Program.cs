@@ -3,7 +3,7 @@
 // - Fenêtre claude.ai intégrée (Edge WebView2) : on se connecte une fois, elle reste cachée.
 // - Toutes les 5 min : lecture de l'utilisation (session 5 h et semaine).
 // - Pastille dans la zone de notification : pourcentage le plus élevé, vert / orange / rouge,
-//   gris si pas de chiffres depuis 20 min. Notification à 70 % et 90 %.
+//   gris si pas de chiffres depuis 20 min. Notification à 50 % et 85 %.
 // - Clic droit : actualiser, afficher la fenêtre claude.ai, lancer au démarrage, quitter.
 using System;
 using System.Collections.Generic;
@@ -99,11 +99,11 @@ namespace JaugeClaude
 
     static class Outils
     {
-        public static readonly Color Vert = Color.FromArgb(46, 158, 91), Orange = Color.FromArgb(224, 161, 0),
-            Rouge = Color.FromArgb(214, 69, 69), Gris = Color.FromArgb(130, 130, 130);
+        public static readonly Color Vert = ColorTranslator.FromHtml("#22C55E"), Orange = ColorTranslator.FromHtml("#F59E0B"),
+            Rouge = ColorTranslator.FromHtml("#EF4444"), Gris = Color.FromArgb(130, 130, 130);
 
         public static Color Couleur(int? pct) =>
-            pct == null ? Gris : pct >= 90 ? Rouge : pct >= 70 ? Orange : Vert;
+            pct == null ? Gris : pct >= 85 ? Rouge : pct >= 50 ? Orange : Vert;
 
         public static DateTimeOffset? Date(string iso) =>
             DateTimeOffset.TryParse(iso, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var d)
@@ -127,7 +127,37 @@ namespace JaugeClaude
 
         [DllImport("user32.dll")] static extern bool DestroyIcon(IntPtr h);
 
-        /// <summary>Pastille colorée (carré arrondi), chiffres agrandis au maximum, dessinée à la taille exacte de la zone de notification.</summary>
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        static extern int GetCurrentPackageFullName(ref int longueur, System.Text.StringBuilder nom);
+
+        /// <summary>Vrai si l'application tourne en version Microsoft Store (paquet MSIX).</summary>
+        public static bool EnPaquet()
+        {
+            try
+            {
+                int n = 0;
+                return GetCurrentPackageFullName(ref n, null) != 15700;   // 15700 = APPMODEL_ERROR_NO_PACKAGE
+            }
+            catch (EntryPointNotFoundException) { return false; }
+        }
+
+        /// <summary>Forme « étoile arrondie » à 4 branches, dans un carré de côté t.</summary>
+        public static GraphicsPath Etoile(float t)
+        {
+            float k = t / 24f, f = 0.62f;   // f : rondeur (0 = étoile fine, 1 = carré)
+            PointF P(float x, float y) => new PointF(x * k, y * k);
+            PointF C(float cx, float cy) => P(12 + (cx - 12) * f, 12 + (cy - 12) * f);
+            var e = new GraphicsPath();
+            e.AddBezier(P(12, 0), C(0, 0), C(0, 0), P(0, 12));
+            e.AddBezier(P(0, 12), C(0, 24), C(0, 24), P(12, 24));
+            e.AddBezier(P(12, 24), C(24, 24), C(24, 24), P(24, 12));
+            e.AddBezier(P(24, 12), C(24, 0), C(24, 0), P(12, 0));
+            e.CloseFigure();
+            return e;
+        }
+
+        /// <summary>Étoile arrondie de la couleur du seuil, avec le pourcentage au centre,
+        /// dessinée à la taille exacte de la zone de notification.</summary>
         public static Icon Dessiner(int? pct, bool obsolete, Icon ancienne)
         {
             int t = Math.Max(16, SystemInformation.SmallIconSize.Width);   // 16, 20, 24, 32 selon la mise à l'échelle
@@ -136,25 +166,19 @@ namespace JaugeClaude
                 using (var g = Graphics.FromImage(bmp))
                 {
                     g.SmoothingMode = SmoothingMode.AntiAlias;
-                    // Carré aux coins arrondis : plus de place qu'un rond pour deux chiffres.
-                    float rayon = t * 0.28f;
-                    using (var forme = new GraphicsPath())
+                    using (var forme = Etoile(t))
                     using (var fond = new SolidBrush(obsolete ? Gris : Couleur(pct)))
-                    {
-                        forme.AddArc(0, 0, 2 * rayon, 2 * rayon, 180, 90);
-                        forme.AddArc(t - 2 * rayon, 0, 2 * rayon, 2 * rayon, 270, 90);
-                        forme.AddArc(t - 2 * rayon, t - 2 * rayon, 2 * rayon, 2 * rayon, 0, 90);
-                        forme.AddArc(0, t - 2 * rayon, 2 * rayon, 2 * rayon, 90, 90);
-                        forme.CloseFigure();
                         g.FillPath(fond, forme);
-                    }
                     var texte = pct == null ? "?" : pct >= 100 ? "!" : pct.ToString();
                     using (var chemin = new GraphicsPath())
                     {
                         chemin.AddString(texte, new FontFamily("Arial"), (int)FontStyle.Bold, 100, Point.Empty, StringFormat.GenericTypographic);
                         var r = chemin.GetBounds();
-                        // Le texte occupe au plus 80 % de la largeur et 60 % de la hauteur : marge tout autour.
-                        float echelle = Math.Min(t * 0.80f / r.Width, t * 0.60f / r.Height);
+                        // Chiffres aussi grands que possible : ils peuvent déborder des pointes de l'étoile,
+                        // le contour sombre les garde lisibles.
+                        float echelle = texte.Length > 1
+                            ? Math.Min(t * 0.94f / r.Width, t * 0.72f / r.Height)
+                            : t * 0.80f / r.Height;
                         using (var m = new Matrix())
                         {
                             m.Translate(t / 2f, t / 2f);
@@ -162,6 +186,9 @@ namespace JaugeClaude
                             m.Translate(-(r.X + r.Width / 2), -(r.Y + r.Height / 2));
                             chemin.Transform(m);
                         }
+                        // Léger contour sombre : chiffres lisibles même sur le vert et l'orange.
+                        using (var contour = new Pen(Color.FromArgb(150, 0, 0, 0), Math.Max(1.2f, t / 14f)) { LineJoin = LineJoin.Round })
+                            g.DrawPath(contour, chemin);
                         g.FillPath(Brushes.White, chemin);
                     }
                 }
@@ -176,7 +203,7 @@ namespace JaugeClaude
     {
         const string UrlUsage = "https://claude.ai/settings/usage";
         const string CleRun = @"Software\Microsoft\Windows\CurrentVersion\Run";
-        static readonly int[] Seuils = { 70, 90 };
+        static readonly int[] Seuils = { 50, 85 };
         static readonly TimeSpan Intervalle = TimeSpan.FromMinutes(5), ObsoleteApres = TimeSpan.FromMinutes(20);
 
         // Exécuté dans la page claude.ai : même session que le site. Répond via postMessage.
@@ -214,26 +241,31 @@ namespace JaugeClaude
 
         public Appli()
         {
-            PremierReglageDemarrage();
+            // Version Store : le démarrage automatique est déclaré dans le paquet
+            // et se règle dans Paramètres > Applications > Démarrage.
+            bool store = Outils.EnPaquet();
+            if (!store) PremierReglageDemarrage();
 
             lSession = new ToolStripMenuItem { Enabled = false };
             lSemaine = new ToolStripMenuItem { Enabled = false };
             mDemarrage = new ToolStripMenuItem("Lancer au démarrage de Windows", null,
                 (s, e) => ReglerDemarrage(!AuDemarrage()));
             var menu = new ContextMenuStrip();
+            if (store) mDemarrage.Visible = false;
             menu.Items.AddRange(new ToolStripItem[] {
                 lSession, lSemaine, new ToolStripSeparator(),
                 new ToolStripMenuItem("Ouvrir la page Utilisation", null, (s, e) => OuvrirUsage()) { Font = new Font(menu.Font, FontStyle.Bold) },
                 new ToolStripMenuItem("Actualiser maintenant", null, (s, e) => Releve()),
                 new ToolStripMenuItem("Afficher la fenêtre claude.ai (connexion)", null, (s, e) => Montrer()),
-                mDemarrage, new ToolStripSeparator(),
+                mDemarrage,
+                new ToolStripSeparator(),
                 new ToolStripMenuItem("Quitter", null, (s, e) => Quitter()),
             });
             menu.Opening += (s, e) =>
             {
                 lSession.Text = Ligne("Session", session);
                 lSemaine.Text = Ligne("Semaine", semaine);
-                mDemarrage.Checked = AuDemarrage();
+                if (!store) mDemarrage.Checked = AuDemarrage();
             };
 
             icone = new NotifyIcon { Icon = Outils.Dessiner(null, true, null), Text = "Jauge Claude : démarrage…",
@@ -317,7 +349,7 @@ namespace JaugeClaude
             Rafraichir();
         }
 
-        // ------------------------------------------------------------ alertes 70 / 90 %
+        // ------------------------------------------------------------ alertes 50 / 85 %
         void Alertes()
         {
             var fichier = Path.Combine(Program.Dossier, "alertes.txt");
