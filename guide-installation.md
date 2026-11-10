@@ -1,67 +1,67 @@
-# Jauge d'utilisation Claude – guide d'installation (v3.0)
+# Jauge Claude – mode d'emploi (v3)
 
 ## À quoi ça sert
 
-Cette petite application affiche en permanence combien de votre quota Claude vous avez consommé, pour ne plus être bloqué par surprise. Elle prévient par une notification Windows quand vous approchez de la limite.
+Claude impose deux limites d'utilisation : une **session** de 5 heures et un plafond sur **7 jours**. La Jauge Claude affiche en permanence où vous en êtes, sous forme d'une pastille colorée près de l'horloge, et vous prévient à 70 % et 90 %.
 
-Claude impose deux limites :
+## Installer
 
-- **Session** : une fenêtre de 5 heures.
-- **Semaine** : un plafond sur 7 jours.
+1. Téléchargez **`JaugeClaude.exe`** sur la page [Releases](https://github.com/gautierm78/jauge-claude/releases/latest).
+2. Rangez-le dans un dossier où il restera (par exemple `Documents`). Le démarrage automatique pointe vers cet emplacement ; si vous le déplacez, relancez-le une fois depuis son nouvel emplacement.
+3. Double-cliquez dessus.
+   - Si Windows affiche **« Windows a protégé votre ordinateur »** : cliquez sur *Informations complémentaires*, puis *Exécuter quand même* (une seule fois).
+   - Si Windows affiche **« Le Contrôle intelligent des applications a bloqué… »** : voir la section *Blocage* plus bas.
+4. Une fenêtre **« Jauge Claude – connexion à claude.ai »** s'ouvre : connectez-vous comme d'habitude, puis fermez-la avec la croix. Elle se cache, l'application continue.
+5. La pastille apparaît près de l'horloge (cliquez sur la flèche **^** si elle est masquée ; vous pouvez la glisser à côté de l'horloge pour la garder visible).
 
-La jauge prend la forme d'une pastille colorée dans la zone de notification Windows, près de l'horloge. Elle fonctionne **sans Tampermonkey et sans navigateur ouvert** : l'application a sa propre fenêtre claude.ai, cachée.
+L'application se lance ensuite toute seule à chaque démarrage de Windows.
 
-## Avant de commencer
-
-- Windows 10 ou 11 (le moteur Edge WebView2 est déjà installé ; sinon, Windows le propose).
-- Un compte Claude (Pro, Max, Team ou Enterprise).
-- Environ 5 minutes.
-
-## Installation pas à pas
-
-1. **Installer Python.** Ouvrez le Microsoft Store, cherchez « Python 3.12 », cliquez sur **Obtenir**.
-2. **Télécharger la jauge.** Téléchargez le fichier `JaugeClaude.zip` et décompressez-le (clic droit > Extraire tout). Le programme est copié dans `%LOCALAPPDATA%\JaugeClaude` : le dossier téléchargé peut ensuite être supprimé.
-3. **Lancer `installer.bat`** (double-clic). Il installe les composants, ajoute la jauge au démarrage de Windows et la lance.
-4. **Se connecter une fois.** Une fenêtre « Jauge Claude – connexion à claude.ai » s'ouvre au premier lancement (si elle ne s'ouvre pas : clic droit sur la pastille > **Afficher la fenêtre claude.ai**). Connectez-vous comme d'habitude, puis fermez la fenêtre avec la croix : elle se cache, l'application continue.
-5. **Vérifier.** Après quelques secondes, la pastille prend sa couleur et affiche votre pourcentage. Cliquez sur la flèche ^ près de l'horloge si elle est masquée ; vous pouvez la glisser à côté de l'horloge pour la garder visible.
-
-## Utilisation au quotidien
-
-Rien à faire : la jauge se met à jour toutes les 5 minutes.
+## Au quotidien
 
 | Couleur | Niveau | Ce que ça veut dire |
 | --- | --- | --- |
 | Vert | moins de 70 % | Tout va bien. |
-| Orange | de 70 à 89 % | Gardez les grosses tâches pour après la remise à zéro. |
-| Rouge | 90 % et plus | Blocage proche : terminez l'essentiel. |
+| Orange | 70 à 89 % | Gardez les grosses tâches pour après la remise à zéro. |
+| Rouge | 90 % et plus | Blocage proche. |
 | Gris | — | Pas de chiffres depuis 20 min (pas de réseau, ou déconnecté). |
 
 - **Survol** : détail session / semaine et heures de remise à zéro.
-- **Double-clic** : ouvre la page Utilisation de claude.ai.
-- **Clic droit** : actualiser maintenant, afficher la fenêtre claude.ai, quitter.
+- **Double-clic** : ouvre la page Utilisation de claude.ai dans votre navigateur.
+- **Clic droit** : *Actualiser maintenant*, *Afficher la fenêtre claude.ai* (pour se reconnecter), *Lancer au démarrage de Windows* (case à cocher), *Quitter*.
 
 Une notification arrive une seule fois à 70 % et une seule fois à 90 %, pour la session comme pour la semaine.
+
+## Mettre à jour
+
+1. Clic droit sur la pastille > **Quitter**.
+2. Remplacez `JaugeClaude.exe` par la nouvelle version, au même endroit, et lancez-la. Vous restez connecté.
+
+## Désinstaller
+
+L'application n'est pas « installée » : elle n'apparaît donc pas dans *Paramètres > Applications*.
+
+1. Clic droit sur la pastille : décochez **Lancer au démarrage de Windows**, puis **Quitter**.
+2. Supprimez `JaugeClaude.exe`.
+3. Supprimez le dossier `%APPDATA%\JaugeClaude` (collez ce chemin dans la barre d'adresse de l'Explorateur). Cela efface aussi la connexion à claude.ai.
 
 ## En cas de souci
 
 | Problème | Solution |
 | --- | --- |
-| La pastille reste grise avec « connectez-vous » | Votre session claude.ai a expiré : la fenêtre de connexion se réaffiche, reconnectez-vous. |
-| Message « La Jauge Claude tourne déjà » | Elle est déjà lancée : regardez derrière la flèche ^. |
-| « Python n'est pas installé » | Installez Python 3.12 depuis le Microsoft Store, puis relancez `installer.bat`. |
-| La fenêtre de connexion reste blanche | Installez « Microsoft Edge WebView2 Runtime » depuis le site de Microsoft. |
-| Je veux me déconnecter | Quittez la jauge et supprimez le dossier `%APPDATA%\JaugeClaude`. |
+| Pastille grise, « connectez-vous » | La session claude.ai a expiré : la fenêtre de connexion se réaffiche, reconnectez-vous. |
+| « La Jauge Claude tourne déjà » | Elle est déjà lancée : regardez derrière la flèche ^. |
+| « Microsoft Edge WebView2 est introuvable » | Acceptez d'ouvrir la page Microsoft et installez « WebView2 Runtime ». |
+| Autre erreur au démarrage | Le détail est dans `%APPDATA%\JaugeClaude\erreur.txt`. |
 
-## Désinstaller
+## Blocage par le Contrôle intelligent des applications (Windows 11)
 
-1. Clic droit sur la pastille > **Quitter**.
-2. Touche Windows + R, tapez `shell:startup`, supprimez le raccourci « Jauge Claude ».
-3. Supprimez le dossier `%APPDATA%\JaugeClaude` et le dossier de la jauge.
+Ce filtre de Windows 11 refuse tout programme qui n'est pas signé numériquement. Cocher *Débloquer* dans les propriétés du fichier ne suffit pas, et il n'y a pas de bouton *Exécuter quand même*.
+
+Solutions :
+
+- **Attendre une version signée** (Microsoft Store ou certificat) : c'est la seule solution qui garde la protection active.
+- **Désactiver le filtre** : *Sécurité Windows > Contrôle des applications et du navigateur > Paramètres du Contrôle intelligent des applications > Désactivé*. Attention : il ne peut plus être réactivé sans réinstaller Windows. Déconseillé sur un PC professionnel.
 
 ## Sécurité
 
-- Le programme ne stocke aucun mot de passe : il utilise la session de sa fenêtre claude.ai, conservée dans `%APPDATA%\JaugeClaude`, comme le ferait un navigateur.
-- Il n'ouvre aucun port réseau et ne contacte que claude.ai.
-- L'adresse lue est celle de la page Utilisation de claude.ai, non documentée officiellement : si elle change, la jauge devra être adaptée.
-
-Note : le PDF `docs/mode-emploi-jauge-claude.pdf` décrit encore l'ancienne version Tampermonkey (v2.1).
+Le code source complet est public ([`csharp/Program.cs`](csharp/Program.cs)) et le `.exe` est construit en public par GitHub. Le [README](README.md#ce-que-fait-le-programme-et-ce-quil-ne-fait-pas) détaille ce que fait le programme et comment vérifier le fichier téléchargé.
