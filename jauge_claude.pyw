@@ -241,6 +241,56 @@ def boucle():
         rafraichir()  # met à jour les « dans x min » et l'état obsolète
 
 
+# ---------------------------------------------------------------- démarrage avec Windows
+CLE_RUN = r"Software\Microsoft\Windows\CurrentVersion\Run"
+
+
+def commande_lancement():
+    import sys
+    if getattr(sys, "frozen", False):  # JaugeClaude.exe
+        return f'"{sys.executable}"'
+    pythonw = Path(sys.executable).with_name("pythonw.exe")
+    return f'"{pythonw}" "{Path(__file__).resolve()}"'
+
+
+def au_demarrage():
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, CLE_RUN) as k:
+            winreg.QueryValueEx(k, "JaugeClaude")
+        return True
+    except OSError:
+        return False
+
+
+def regler_demarrage(actif):
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, CLE_RUN, 0, winreg.KEY_SET_VALUE) as k:
+            if actif:
+                winreg.SetValueEx(k, "JaugeClaude", 0, winreg.REG_SZ, commande_lancement())
+            else:
+                winreg.DeleteValue(k, "JaugeClaude")
+    except OSError:
+        pass
+
+
+def premier_reglage_demarrage():
+    """Premier lancement : démarrage automatique activé, ancien raccourci de installer.bat retiré."""
+    marque = DOSSIER / "demarrage_regle"
+    if marque.exists():
+        if au_demarrage():
+            regler_demarrage(True)  # met à jour le chemin si le .exe a été déplacé
+        return
+    regler_demarrage(True)
+    ancien = Path(os.environ.get("APPDATA", "")) / "Microsoft/Windows/Start Menu/Programs/Startup/Jauge Claude.lnk"
+    try:
+        ancien.unlink()
+    except OSError:
+        pass
+    marque.touch()
+
+
 def quitter(icone, _):
     icone.stop()
     if FENETRE:
@@ -259,6 +309,8 @@ ICONE = pystray.Icon(
         pystray.MenuItem("Ouvrir la page Utilisation", lambda *_: webbrowser.open(URL_USAGE), default=True),
         pystray.MenuItem("Actualiser maintenant", lambda *_: reveil.set()),
         pystray.MenuItem("Afficher la fenêtre claude.ai (connexion)", lambda *_: FENETRE and FENETRE.show()),
+        pystray.MenuItem("Lancer au démarrage de Windows", lambda *_: regler_demarrage(not au_demarrage()),
+                         checked=lambda _: au_demarrage()),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem("Quitter", quitter),
     ),
@@ -287,6 +339,7 @@ def main():
     if deja_lancee():
         return
     DOSSIER.mkdir(parents=True, exist_ok=True)
+    premier_reglage_demarrage()
     FENETRE = webview.create_window("Jauge Claude – connexion à claude.ai", URL_USAGE,
                                     js_api=Pont(), width=1000, height=760, hidden=True)
 

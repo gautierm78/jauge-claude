@@ -1,0 +1,29 @@
+name: Construire JaugeClaude.exe
+
+on:
+  push:
+    branches: [main, application-autonome]
+  workflow_dispatch:
+
+jobs:
+  exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Composants
+        run: python -m pip install pyinstaller pystray pillow pywebview
+      - name: Tests
+        run: python -m unittest discover tests
+      - name: Icone
+        run: python -c "from PIL import Image, ImageDraw; im=Image.new('RGBA',(256,256),(0,0,0,0)); ImageDraw.Draw(im).ellipse((8,8,248,248),fill=(46,158,91)); im.save('icone.ico', sizes=[(16,16),(32,32),(48,48),(256,256)])"
+      - name: Construction
+        run: |
+          copy jauge_claude.pyw jauge_claude.py
+          pyinstaller --onefile --noconsole --name JaugeClaude --icon icone.ico --collect-all webview --hidden-import pystray._win32 jauge_claude.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: JaugeClaude
+          path: dist/JaugeClaude.exe
