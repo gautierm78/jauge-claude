@@ -127,7 +127,7 @@ namespace JaugeClaude
 
         [DllImport("user32.dll")] static extern bool DestroyIcon(IntPtr h);
 
-        /// <summary>Pastille ronde colorée, chiffres agrandis au maximum, dessinée à la taille exacte de la zone de notification.</summary>
+        /// <summary>Pastille colorée (carré arrondi), chiffres agrandis au maximum, dessinée à la taille exacte de la zone de notification.</summary>
         public static Icon Dessiner(int? pct, bool obsolete, Icon ancienne)
         {
             int t = Math.Max(16, SystemInformation.SmallIconSize.Width);   // 16, 20, 24, 32 selon la mise à l'échelle
@@ -136,15 +136,25 @@ namespace JaugeClaude
                 using (var g = Graphics.FromImage(bmp))
                 {
                     g.SmoothingMode = SmoothingMode.AntiAlias;
+                    // Carré aux coins arrondis : plus de place qu'un rond pour deux chiffres.
+                    float rayon = t * 0.28f;
+                    using (var forme = new GraphicsPath())
                     using (var fond = new SolidBrush(obsolete ? Gris : Couleur(pct)))
-                        g.FillEllipse(fond, -0.5f, -0.5f, t, t);
+                    {
+                        forme.AddArc(0, 0, 2 * rayon, 2 * rayon, 180, 90);
+                        forme.AddArc(t - 2 * rayon, 0, 2 * rayon, 2 * rayon, 270, 90);
+                        forme.AddArc(t - 2 * rayon, t - 2 * rayon, 2 * rayon, 2 * rayon, 0, 90);
+                        forme.AddArc(0, t - 2 * rayon, 2 * rayon, 2 * rayon, 90, 90);
+                        forme.CloseFigure();
+                        g.FillPath(fond, forme);
+                    }
                     var texte = pct == null ? "?" : pct >= 100 ? "!" : pct.ToString();
                     using (var chemin = new GraphicsPath())
                     {
                         chemin.AddString(texte, new FontFamily("Arial"), (int)FontStyle.Bold, 100, Point.Empty, StringFormat.GenericTypographic);
                         var r = chemin.GetBounds();
-                        // Le texte occupe ~86 % de la largeur (2 chiffres) ou ~62 % de la hauteur (1 chiffre).
-                        float echelle = Math.Min(t * 0.86f / r.Width, t * 0.62f / r.Height);
+                        // Le texte occupe au plus 80 % de la largeur et 60 % de la hauteur : marge tout autour.
+                        float echelle = Math.Min(t * 0.80f / r.Width, t * 0.60f / r.Height);
                         using (var m = new Matrix())
                         {
                             m.Translate(t / 2f, t / 2f);
