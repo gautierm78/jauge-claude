@@ -127,6 +127,20 @@ namespace JaugeClaude
 
         [DllImport("user32.dll")] static extern bool DestroyIcon(IntPtr h);
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        static extern int GetCurrentPackageFullName(ref int longueur, System.Text.StringBuilder nom);
+
+        /// <summary>Vrai si l'application tourne en version Microsoft Store (paquet MSIX).</summary>
+        public static bool EnPaquet()
+        {
+            try
+            {
+                int n = 0;
+                return GetCurrentPackageFullName(ref n, null) != 15700;   // 15700 = APPMODEL_ERROR_NO_PACKAGE
+            }
+            catch (EntryPointNotFoundException) { return false; }
+        }
+
         /// <summary>Pastille colorée (carré arrondi), chiffres agrandis au maximum, dessinée à la taille exacte de la zone de notification.</summary>
         public static Icon Dessiner(int? pct, bool obsolete, Icon ancienne)
         {
@@ -214,26 +228,31 @@ namespace JaugeClaude
 
         public Appli()
         {
-            PremierReglageDemarrage();
+            // Version Store : le démarrage automatique est déclaré dans le paquet
+            // et se règle dans Paramètres > Applications > Démarrage.
+            bool store = Outils.EnPaquet();
+            if (!store) PremierReglageDemarrage();
 
             lSession = new ToolStripMenuItem { Enabled = false };
             lSemaine = new ToolStripMenuItem { Enabled = false };
             mDemarrage = new ToolStripMenuItem("Lancer au démarrage de Windows", null,
                 (s, e) => ReglerDemarrage(!AuDemarrage()));
             var menu = new ContextMenuStrip();
+            if (store) mDemarrage.Visible = false;
             menu.Items.AddRange(new ToolStripItem[] {
                 lSession, lSemaine, new ToolStripSeparator(),
                 new ToolStripMenuItem("Ouvrir la page Utilisation", null, (s, e) => OuvrirUsage()) { Font = new Font(menu.Font, FontStyle.Bold) },
                 new ToolStripMenuItem("Actualiser maintenant", null, (s, e) => Releve()),
                 new ToolStripMenuItem("Afficher la fenêtre claude.ai (connexion)", null, (s, e) => Montrer()),
-                mDemarrage, new ToolStripSeparator(),
+                mDemarrage,
+                new ToolStripSeparator(),
                 new ToolStripMenuItem("Quitter", null, (s, e) => Quitter()),
             });
             menu.Opening += (s, e) =>
             {
                 lSession.Text = Ligne("Session", session);
                 lSemaine.Text = Ligne("Semaine", semaine);
-                mDemarrage.Checked = AuDemarrage();
+                if (!store) mDemarrage.Checked = AuDemarrage();
             };
 
             icone = new NotifyIcon { Icon = Outils.Dessiner(null, true, null), Text = "Jauge Claude : démarrage…",

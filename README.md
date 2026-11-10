@@ -60,6 +60,16 @@ Le fichier n'est pas signé numériquement (une signature est payante). Selon vo
 
 L'adresse lue est celle qu'utilise la page Utilisation de claude.ai. Elle n'est pas documentée officiellement : si elle change, l'application devra être adaptée.
 
+## Publier une nouvelle version
+
+1. Sur GitHub : **Releases** > **Draft a new release**.
+2. **Choose a tag** : tapez le numéro (par exemple `v3.1.0`) puis **Create new tag**. Titre et description au choix, **sans joindre de fichier**.
+3. **Publish release**. En 2 à 3 minutes, GitHub construit l'application et ajoute lui-même `JaugeClaude.exe` et `JaugeClaude.exe.sha256` à la version.
+
+## Microsoft Store
+
+Le paquet pour le Store (`JaugeClaude-Store.msix`) est construit automatiquement (onglet **Actions** > **Artifacts**). La procédure de publication est dans [`store/README.md`](store/README.md). Politique de confidentialité : [`CONFIDENTIALITE.md`](CONFIDENTIALITE.md).
+
 ## Licence
 
 MIT, voir [`LICENSE`](LICENSE).
