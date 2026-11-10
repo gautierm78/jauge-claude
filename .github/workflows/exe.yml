@@ -20,7 +20,7 @@ jobs:
   exe:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Numéro de version
         id: v
@@ -52,7 +52,7 @@ jobs:
           -EditeurAffiche "${{ vars.MSIX_PUBLISHER_DISPLAY || 'Jauge Claude' }}"
           -Sortie sortie\JaugeClaude-Store.msix
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: JaugeClaude
           path: sortie/
