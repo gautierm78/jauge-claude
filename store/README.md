@@ -37,7 +37,7 @@ Dans l'Espace partenaires, **Démarrer la soumission** :
 - **Propriétés** : catégorie *Productivité*. Politique de confidentialité : `https://github.com/gautierm78/jauge-claude/blob/main/CONFIDENTIALITE.md`.
 - **Classification par âge** : questionnaire (aucun contenu sensible).
 - **Packages** : glissez `JaugeClaude-Store.msix`.
-- **Fiche du Store** (Français) : textes ci-dessous, plus au moins une capture d'écran (1366×768 ou plus) montrant la pastille et son infobulle.
+- **Fiche du Store** (Français) : textes ci-dessous, plus au moins une capture d'écran (1366×768 ou plus) montrant l'étoile et son infobulle.
 - **Notes pour la certification** : texte ci-dessous.
 
 Envoyez. La certification prend en général de quelques heures à 3 jours.
@@ -46,9 +46,9 @@ Envoyez. La certification prend en général de quelques heures à 3 jours.
 
 > Jauge Claude affiche en permanence votre utilisation de Claude (claude.ai) dans la zone de notification, près de l'horloge.
 >
-> • Pastille colorée avec le pourcentage le plus élevé : vert sous 70 %, orange de 70 à 89 %, rouge à partir de 90 %.
+> • Étoile colorée avec le pourcentage le plus élevé : vert sous 50 %, orange de 50 à 84 %, rouge à partir de 85 %.
 > • Survol : détail de la session (5 heures) et de la semaine, avec les heures de remise à zéro.
-> • Notification Windows à 70 % et à 90 %.
+> • Notification Windows à 50 % et à 85 %.
 > • Se lance avec Windows, se met à jour toute seule toutes les 5 minutes.
 >
 > Connectez-vous une fois à claude.ai dans la fenêtre de l'application ; ensuite, tout est automatique.

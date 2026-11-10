@@ -1,6 +1,6 @@
 # Jauge d'utilisation Claude
 
-Petite application Windows qui affiche en permanence votre consommation Claude (session 5 h et semaine) près de l'horloge, avec une notification à 70 % et 90 %.
+Petite application Windows qui affiche en permanence votre consommation Claude (session 5 h et semaine) près de l'horloge, avec une notification à 50 % et 85 %.
 
 - **Un seul fichier** `JaugeClaude.exe` (moins de 1 Mo), sans installation ni dépendance : Windows 10/11 contient déjà tout (.NET Framework 4.8 et Edge WebView2).
 - **Code source complet et lisible** dans [`csharp/Program.cs`](csharp/Program.cs) (un seul fichier d'environ 400 lignes, commenté en français).
@@ -16,7 +16,7 @@ Mode d'emploi complet : [`guide-installation.md`](guide-installation.md).
 
 1. Au premier lancement, une fenêtre claude.ai s'ouvre (moteur Edge WebView2, comme un navigateur). Connectez-vous une fois, puis fermez-la : elle se cache, l'application continue.
 2. Toutes les 5 minutes, l'application lit votre utilisation sur claude.ai, comme le fait la page *Paramètres > Utilisation*.
-3. La pastille affiche le pourcentage le plus élevé : vert < 70 %, orange 70-89 %, rouge ≥ 90 %, gris si pas de chiffres depuis 20 min.
+3. L'étoile affiche le pourcentage le plus élevé : vert < 50 %, orange 50-84 %, rouge ≥ 85 %, gris si pas de chiffres depuis 20 min.
 4. Clic droit : actualiser, afficher la fenêtre claude.ai, lancer au démarrage de Windows, quitter.
 
 ## Ce que fait le programme, et ce qu'il ne fait pas

@@ -17,20 +17,21 @@ Remove-Item $dossier -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force "$dossier\Assets" | Out-Null
 Copy-Item $Exe "$dossier\JaugeClaude.exe"
 
-# Logos : la pastille verte aux coins arrondis, à chaque taille demandée par le Store.
+# Logos : l'étoile arrondie verte de l'application (même forme que dans Program.cs), sans chiffre.
 function Logo([int]$taille, [string]$fichier) {
   $bmp = New-Object System.Drawing.Bitmap $taille, $taille
   $g = [System.Drawing.Graphics]::FromImage($bmp)
   $g.SmoothingMode = "AntiAlias"
-  $m = [math]::Round($taille * 0.08); $c = $taille - 2 * $m; $r = $c * 0.28
-  $p = New-Object System.Drawing.Drawing2D.GraphicsPath
-  $p.AddArc($m, $m, 2*$r, 2*$r, 180, 90); $p.AddArc($m+$c-2*$r, $m, 2*$r, 2*$r, 270, 90)
-  $p.AddArc($m+$c-2*$r, $m+$c-2*$r, 2*$r, 2*$r, 0, 90); $p.AddArc($m, $m+$c-2*$r, 2*$r, 2*$r, 90, 90)
-  $p.CloseFigure()
-  $g.FillPath((New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::FromArgb(46,158,91))), $p)
-  $police = New-Object System.Drawing.Font "Arial", ($c * 0.42), ([System.Drawing.FontStyle]::Bold), ([System.Drawing.GraphicsUnit]::Pixel)
-  $f = New-Object System.Drawing.StringFormat; $f.Alignment = "Center"; $f.LineAlignment = "Center"
-  $g.DrawString("%", $police, [System.Drawing.Brushes]::White, (New-Object System.Drawing.RectangleF 0, 0, $taille, $taille), $f)
+  $k = $taille / 24.0; $f = 0.62
+  function P($x, $y) { New-Object System.Drawing.PointF ([single]($x * $k)), ([single]($y * $k)) }
+  function C($x, $y) { P (12 + ($x - 12) * $f) (12 + ($y - 12) * $f) }
+  $e = New-Object System.Drawing.Drawing2D.GraphicsPath
+  $e.AddBezier((P 12 0), (C 0 0), (C 0 0), (P 0 12))
+  $e.AddBezier((P 0 12), (C 0 24), (C 0 24), (P 12 24))
+  $e.AddBezier((P 12 24), (C 24 24), (C 24 24), (P 24 12))
+  $e.AddBezier((P 24 12), (C 24 0), (C 24 0), (P 12 0))
+  $e.CloseFigure()
+  $g.FillPath((New-Object System.Drawing.SolidBrush ([System.Drawing.ColorTranslator]::FromHtml("#22C55E"))), $e)
   $bmp.Save("$dossier\Assets\$fichier", [System.Drawing.Imaging.ImageFormat]::Png)
   $g.Dispose(); $bmp.Dispose()
 }
