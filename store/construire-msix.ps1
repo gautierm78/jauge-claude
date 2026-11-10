@@ -6,6 +6,7 @@ param(
   [string]$Nom = "JaugeClaude",
   [string]$Editeur = "CN=JaugeClaude",
   [string]$EditeurAffiche = "Jauge Claude",
+  [string]$NomAffiche = "Jauge Claude",
   [string]$Sortie = "JaugeClaude.msix"
 )
 $ErrorActionPreference = "Stop"
@@ -46,7 +47,7 @@ $parts = @($v.Split('.') | Where-Object { $_ -ne '' }) + @('0','0','0')
 $v4 = "$($parts[0]).$($parts[1]).$($parts[2]).0"
 (Get-Content "store\AppxManifest.xml" -Raw -Encoding UTF8).
   Replace("{{NAME}}", $Nom).Replace("{{PUBLISHER}}", $Editeur).
-  Replace("{{PUBLISHER_DISPLAY}}", $EditeurAffiche).Replace("{{VERSION}}", $v4) |
+  Replace("{{PUBLISHER_DISPLAY}}", $EditeurAffiche).Replace("{{DISPLAY_NAME}}", [System.Security.SecurityElement]::Escape($NomAffiche)).Replace("{{VERSION}}", $v4) |
   Set-Content "$dossier\AppxManifest.xml" -Encoding UTF8
 Remove-Item "$dossier\Assets\StoreLogo300.png"
 
