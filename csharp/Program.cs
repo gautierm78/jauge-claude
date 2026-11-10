@@ -127,21 +127,33 @@ namespace JaugeClaude
 
         [DllImport("user32.dll")] static extern bool DestroyIcon(IntPtr h);
 
-        /// <summary>Pastille ronde colorée avec le pourcentage au centre.</summary>
+        /// <summary>Pastille ronde colorée, chiffres agrandis au maximum, dessinée à la taille exacte de la zone de notification.</summary>
         public static Icon Dessiner(int? pct, bool obsolete, Icon ancienne)
         {
-            using (var bmp = new Bitmap(32, 32))
+            int t = Math.Max(16, SystemInformation.SmallIconSize.Width);   // 16, 20, 24, 32 selon la mise à l'échelle
+            using (var bmp = new Bitmap(t, t))
             {
                 using (var g = Graphics.FromImage(bmp))
                 {
                     g.SmoothingMode = SmoothingMode.AntiAlias;
-                    g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
                     using (var fond = new SolidBrush(obsolete ? Gris : Couleur(pct)))
-                        g.FillEllipse(fond, 0, 0, 31, 31);
+                        g.FillEllipse(fond, -0.5f, -0.5f, t, t);
                     var texte = pct == null ? "?" : pct >= 100 ? "!" : pct.ToString();
-                    using (var police = new Font("Segoe UI", texte.Length <= 1 ? 17 : 14, FontStyle.Bold, GraphicsUnit.Pixel))
-                    using (var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                        g.DrawString(texte, police, Brushes.White, new RectangleF(0, 1, 32, 32), format);
+                    using (var chemin = new GraphicsPath())
+                    {
+                        chemin.AddString(texte, new FontFamily("Arial"), (int)FontStyle.Bold, 100, Point.Empty, StringFormat.GenericTypographic);
+                        var r = chemin.GetBounds();
+                        // Le texte occupe ~86 % de la largeur (2 chiffres) ou ~62 % de la hauteur (1 chiffre).
+                        float echelle = Math.Min(t * 0.86f / r.Width, t * 0.62f / r.Height);
+                        using (var m = new Matrix())
+                        {
+                            m.Translate(t / 2f, t / 2f);
+                            m.Scale(echelle, echelle);
+                            m.Translate(-(r.X + r.Width / 2), -(r.Y + r.Height / 2));
+                            chemin.Transform(m);
+                        }
+                        g.FillPath(Brushes.White, chemin);
+                    }
                 }
                 var icone = Icon.FromHandle(bmp.GetHicon());
                 if (ancienne != null) DestroyIcon(ancienne.Handle);
