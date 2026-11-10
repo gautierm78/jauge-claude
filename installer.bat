@@ -16,7 +16,7 @@ if errorlevel 1 (
 )
 
 echo Installation des composants pystray, pillow et pywebview...
-python -m pip install --user --quiet --disable-pip-version-check pystray pillow pywebview
+python -m pip install --user --quiet --disable-pip-version-check --no-warn-script-location pystray pillow pywebview
 if errorlevel 1 (
   echo L'installation des composants a echoue.
   pause
