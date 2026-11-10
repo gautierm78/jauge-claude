@@ -24,7 +24,7 @@ Dans l'Espace partenaires : votre application > **Identité du produit**. Trois 
 | Package/Identity/Name | `MSIX_NAME` |
 | Package/Identity/Publisher (commence par `CN=`) | `MSIX_PUBLISHER` |
 | Package/Properties/PublisherDisplayName | `MSIX_PUBLISHER_DISPLAY` |
-| Nom réservé (Package/Properties/DisplayName), si différent de « Jauge d'utilisation pour Claude » | `MSIX_DISPLAY_NAME` (facultatif) |
+| Nom réservé (Package/Properties/DisplayName), si différent de « Jauge d’utilisation pour Claude » (apostrophe typographique ’) | `MSIX_DISPLAY_NAME` (facultatif) |
 
 Sur GitHub : **Settings** > **Secrets and variables** > **Actions** > onglet **Variables** > **New repository variable**, une fois pour chacune.
 

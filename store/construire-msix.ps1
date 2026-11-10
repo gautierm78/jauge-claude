@@ -6,10 +6,13 @@ param(
   [string]$Nom = "JaugeClaude",
   [string]$Editeur = "CN=JaugeClaude",
   [string]$EditeurAffiche = "Jauge Claude",
-  [string]$NomAffiche = "Jauge Claude",
+  [string]$NomAffiche = "",
   [string]$Sortie = "JaugeClaude.msix"
 )
 $ErrorActionPreference = "Stop"
+# Nom réservé dans l'Espace partenaires, avec l'apostrophe typographique (U+2019).
+# Écrit avec [char] pour ne pas dépendre de l'encodage du fichier ou de la ligne de commande.
+if (-not $NomAffiche) { $NomAffiche = "Jauge d" + [char]0x2019 + "utilisation pour Claude" }
 Add-Type -AssemblyName System.Drawing
 
 $dossier = Join-Path $env:RUNNER_TEMP "msix"
