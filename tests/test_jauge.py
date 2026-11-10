@@ -1,4 +1,4 @@
-"""Tests des fonctions pures de l'icône. Lancer : python -m unittest discover tests"""
+"""Tests des fonctions pures de l'application. Lancer : python -m unittest discover tests"""
 import pathlib
 import sys
 import types
@@ -60,6 +60,27 @@ class Quand(unittest.TestCase):
     def test_heures(self):
         iso = (datetime.now(timezone.utc) + timedelta(hours=3, minutes=5, seconds=30)).isoformat()
         self.assertEqual(jauge.quand(iso), "dans 3 h 05")
+
+
+class Convertir(unittest.TestCase):
+    def test_reponse_claude(self):
+        d = jauge.convertir({"five_hour": {"utilization": 41.6, "resets_at": "2026-01-01T10:00:00Z"}, "seven_day": None})
+        self.assertEqual(d, {"session": {"pct": 42, "reset": "2026-01-01T10:00:00Z"}, "semaine": None})
+
+
+class Alertes(unittest.TestCase):
+    RESET = (datetime.now(timezone.utc) + timedelta(hours=2)).isoformat()
+
+    def test_une_seule_fois_par_seuil(self):
+        d = {"session": {"pct": 91, "reset": self.RESET}, "semaine": {"pct": 10, "reset": self.RESET}}
+        envois, deja = jauge.alertes_a_envoyer(d, {})
+        self.assertEqual(len(envois), 2)  # 70 et 90
+        envois, _ = jauge.alertes_a_envoyer(d, deja)
+        self.assertEqual(envois, [])
+
+    def test_menage(self):
+        _, deja = jauge.alertes_a_envoyer({}, {"vieux": 0}, maintenant=10 * 86400)
+        self.assertEqual(deja, {})
 
 
 if __name__ == "__main__":

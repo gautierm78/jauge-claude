@@ -1,24 +1,34 @@
 # Jauge d'utilisation Claude
 
-Affiche en permanence votre consommation Claude (session 5 h et semaine), avec alertes Windows à 70 % et 90 %.
+Application Windows autonome qui affiche en permanence votre consommation Claude (session 5 h et semaine) dans la zone de notification, avec alertes Windows à 70 % et 90 %.
 
-Deux parties, indépendantes :
-
-- **`claude-usage-badge.user.js`** : script Tampermonkey (Chrome ou Edge). Affiche la jauge en bas à droite de claude.ai (uniquement sur ce site) et envoie les chiffres à l'icône Windows.
-- **`jauge_claude.pyw`** + **`installer.bat`** (optionnel) : pastille colorée dans la zone de notification Windows, près de l'horloge.
+**Plus besoin de Tampermonkey ni de navigateur ouvert** (v3.0) : l'application embarque sa propre fenêtre claude.ai (moteur Edge WebView2, déjà présent sous Windows 10/11). Vous vous connectez une seule fois, la fenêtre se cache et la jauge se met à jour toute seule toutes les 5 minutes.
 
 ## Installation
 
-Le guide pas à pas est dans [`guide-installation.md`](guide-installation.md). Une version PDF imprimable est disponible : [`docs/mode-emploi-jauge-claude.pdf`](docs/mode-emploi-jauge-claude.pdf).
+1. Installer Python 3.12 (Microsoft Store).
+2. Double-cliquer sur `installer.bat` : il installe `pystray`, `pillow` et `pywebview`, ajoute l'application au démarrage de Windows et la lance.
+3. Au premier lancement, connectez-vous à claude.ai dans la fenêtre qui s'ouvre, puis fermez-la (la croix la cache, l'application continue).
 
-1. Installer Tampermonkey, autoriser les scripts utilisateur, coller `claude-usage-badge.user.js`.
-2. Pour l'icône Windows : installer Python 3.12 (Microsoft Store), puis lancer `installer.bat`.
+Guide détaillé : [`guide-installation.md`](guide-installation.md).
+
+## Utilisation
+
+- Pastille : pourcentage le plus élevé (vert < 70 %, orange 70-89 %, rouge ≥ 90 %, gris si pas de chiffres depuis 20 min).
+- Survol : détail session / semaine et heures de remise à zéro.
+- Clic droit : ouvrir la page Utilisation, actualiser, afficher la fenêtre claude.ai (pour se reconnecter), quitter.
+- Si la session expire, la fenêtre de connexion réapparaît d'elle-même.
 
 ## Limites
 
-- L'adresse interrogée est celle que claude.ai utilise pour sa propre page d'utilisation. Elle n'est pas documentée officiellement : si elle change, il faudra adapter le script.
-- Le script ne contient aucun mot de passe ni clé. Il utilise votre session claude.ai déjà ouverte.
-- Le programme Windows n'écoute que sur `127.0.0.1`.
+- L'adresse interrogée est celle que claude.ai utilise pour sa propre page d'utilisation. Elle n'est pas documentée officiellement : si elle change, il faudra adapter le programme.
+- Aucun mot de passe n'est stocké par le programme : la session de la fenêtre intégrée est conservée dans `%APPDATA%\JaugeClaude`. Supprimer ce dossier = se déconnecter.
+
+## Tests
+
+```
+python -m unittest discover tests
+```
 
 ## Licence
 
