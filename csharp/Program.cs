@@ -174,10 +174,11 @@ namespace JaugeClaude
                     {
                         chemin.AddString(texte, new FontFamily("Arial"), (int)FontStyle.Bold, 100, Point.Empty, StringFormat.GenericTypographic);
                         var r = chemin.GetBounds();
-                        // Le centre de l'étoile est plus étroit qu'un carré : 2 chiffres sur 70 % de la largeur.
+                        // Chiffres aussi grands que possible : ils peuvent déborder des pointes de l'étoile,
+                        // le contour sombre les garde lisibles.
                         float echelle = texte.Length > 1
-                            ? Math.Min(t * 0.70f / r.Width, t * 0.46f / r.Height)
-                            : t * 0.52f / r.Height;
+                            ? Math.Min(t * 0.94f / r.Width, t * 0.72f / r.Height)
+                            : t * 0.80f / r.Height;
                         using (var m = new Matrix())
                         {
                             m.Translate(t / 2f, t / 2f);
@@ -186,7 +187,7 @@ namespace JaugeClaude
                             chemin.Transform(m);
                         }
                         // Léger contour sombre : chiffres lisibles même sur le vert et l'orange.
-                        using (var contour = new Pen(Color.FromArgb(90, 0, 0, 0), Math.Max(1f, t / 20f)) { LineJoin = LineJoin.Round })
+                        using (var contour = new Pen(Color.FromArgb(150, 0, 0, 0), Math.Max(1.2f, t / 14f)) { LineJoin = LineJoin.Round })
                             g.DrawPath(contour, chemin);
                         g.FillPath(Brushes.White, chemin);
                     }
