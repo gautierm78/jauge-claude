@@ -50,7 +50,7 @@ jobs:
           -Nom "${{ vars.MSIX_NAME || 'JaugeClaude' }}"
           -Editeur "${{ vars.MSIX_PUBLISHER || 'CN=JaugeClaude' }}"
           -EditeurAffiche "${{ vars.MSIX_PUBLISHER_DISPLAY || 'Jauge Claude' }}"
-          -NomAffiche "${{ vars.MSIX_DISPLAY_NAME || 'Jauge d''utilisation pour Claude' }}"
+          -NomAffiche "${{ vars.MSIX_DISPLAY_NAME }}"
           -Sortie sortie\JaugeClaude-Store.msix
 
       - uses: actions/upload-artifact@v6
