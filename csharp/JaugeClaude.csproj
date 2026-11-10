@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>JaugeClaude</AssemblyName>
+    <RootNamespace>JaugeClaude</RootNamespace>
+    <Version>3.0.0</Version>
+    <Product>Jauge Claude</Product>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <WebView2Version>1.0.2903.40</WebView2Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="$(WebView2Version)" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Les DLL WebView2 sont embarquées dans l'exe : un seul fichier à distribuer. -->
+  <ItemGroup>
+    <EmbeddedResource Include="$(NuGetPackageRoot)microsoft.web.webview2/$(WebView2Version)/lib/net462/Microsoft.Web.WebView2.Core.dll" LogicalName="Microsoft.Web.WebView2.Core.dll" />
+    <EmbeddedResource Include="$(NuGetPackageRoot)microsoft.web.webview2/$(WebView2Version)/lib/net462/Microsoft.Web.WebView2.WinForms.dll" LogicalName="Microsoft.Web.WebView2.WinForms.dll" />
+    <EmbeddedResource Include="$(NuGetPackageRoot)microsoft.web.webview2/$(WebView2Version)/runtimes/win-x64/native/WebView2Loader.dll" LogicalName="WebView2Loader.dll" />
+  </ItemGroup>
+
+</Project>
