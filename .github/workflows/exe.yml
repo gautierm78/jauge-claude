@@ -1,0 +1,47 @@
+name: Construire JaugeClaude.exe
+
+# Chaque construction se fait ici, en public, à partir du code du dépôt :
+# le journal montre exactement ce qui est compilé, et l'empreinte SHA-256 du résultat.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construction (C#, .NET Framework 4.8)
+        run: dotnet build csharp/JaugeClaude.csproj -c Release
+      - name: Empreinte SHA-256
+        shell: bash
+        run: |
+          cd csharp/bin/Release/net48
+          ls -l JaugeClaude.exe
+          sha256sum JaugeClaude.exe | tee JaugeClaude.exe.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: JaugeClaude
+          path: |
+            csharp/bin/Release/net48/JaugeClaude.exe
+            csharp/bin/Release/net48/JaugeClaude.exe.sha256
+      - name: Publier la version (tags v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd csharp/bin/Release/net48
+          gh release create "$GITHUB_REF_NAME" JaugeClaude.exe JaugeClaude.exe.sha256 \
+            --title "Jauge Claude $GITHUB_REF_NAME" \
+            --notes "Téléchargez **JaugeClaude.exe** et double-cliquez dessus. Aucune installation, aucune dépendance.
+
+          Empreinte SHA-256 : \`$(cut -d' ' -f1 JaugeClaude.exe.sha256)\`
+
+          Construit automatiquement par GitHub Actions à partir du code source de ce tag (voir l'onglet Actions). Voir le README pour vérifier le fichier."
