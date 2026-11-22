@@ -70,6 +70,10 @@ L'adresse lue est celle qu'utilise la page Utilisation de claude.ai. Elle n'est 
 
 Le paquet pour le Store (`JaugeClaude-Store.msix`) est construit automatiquement (onglet **Actions** > **Artifacts**). La procédure de publication est dans [`store/README.md`](store/README.md). Politique de confidentialité : [`CONFIDENTIALITE.md`](CONFIDENTIALITE.md).
 
+## Crédits
+
+L'outil de diagnostic est l'œuvre de François Nollet : [**github.com/Francoisnollet/diagrun**](https://github.com/Francoisnollet/diagrun) (Diagrun). Il est intégré à la Jauge Claude avec son accord. Merci à lui !
+
 ## Licence
 
 MIT, voir [`LICENSE`](LICENSE).
