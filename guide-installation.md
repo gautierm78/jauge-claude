@@ -27,7 +27,7 @@ L'application se lance ensuite toute seule à chaque démarrage de Windows.
 
 - **Survol** : détail session / semaine et heures de remise à zéro.
 - **Double-clic** : ouvre la page Utilisation de claude.ai dans votre navigateur.
-- **Clic droit** : *Actualiser maintenant*, *Afficher la fenêtre claude.ai* (pour se reconnecter), *Diagnostic des tokens* (outil de Diagrun, nécessite Node 18+), *Lancer au démarrage de Windows* (case à cocher), *Quitter*.
+- **Clic droit** : *Actualiser maintenant*, *Afficher la fenêtre claude.ai* (pour se reconnecter), *Diagrun : mes tokens sous la loupe* (rapport sur vos sessions Claude Code, adapté de l'outil de François Nollet), *Lancer au démarrage de Windows* (case à cocher), *Quitter*.
 
 Une notification arrive une seule fois à 50 % et une seule fois à 85 %, pour la session comme pour la semaine.
 

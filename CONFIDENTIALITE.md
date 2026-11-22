@@ -11,7 +11,7 @@ Jauge Claude est une application indépendante, non affiliée à Anthropic.
 - Elle affiche le site claude.ai dans une fenêtre intégrée (Microsoft Edge WebView2), où vous vous connectez vous-même. Votre identifiant et votre mot de passe sont saisis directement sur claude.ai ; l'application ne les lit pas et ne les enregistre pas.
 - Elle interroge uniquement claude.ai pour lire vos pourcentages d'utilisation (session et semaine), comme le fait la page *Paramètres > Utilisation* du site.
 - Elle conserve sur votre ordinateur, dans son dossier de données : la session de la fenêtre intégrée (cookies de claude.ai) et la liste des alertes déjà affichées. Rien de cela ne quitte votre ordinateur.
-- Entrée optionnelle « Diagnostic des tokens » : à votre demande uniquement, elle lance l'outil tiers [diag run](https://github.com/Francoisnollet/diagrun) (François Nollet) via `npx`. Cet outil lit en local vos sessions Claude Code et n'envoie aucune donnée ; seul son téléchargement depuis npm accède à internet. Rien n'est lancé sans votre clic.
+- Entrée optionnelle « Diagrun : mes tokens sous la loupe » : à votre demande uniquement, elle lit en local les sessions Claude Code présentes sur votre ordinateur (`%USERPROFILE%\.claude\projects`) et écrit un rapport HTML dans `%APPDATA%\JaugeClaude\diagnostic`. Aucune donnée n'est envoyée, aucun accès réseau. Outil adapté de [diag run](https://github.com/Francoisnollet/diagrun) (François Nollet, licence MIT).
 
 **Supprimer vos données :** désinstallez l'application (Paramètres > Applications) ; pour la version téléchargée depuis GitHub, supprimez aussi le dossier `%APPDATA%\JaugeClaude`.
 

@@ -17,8 +17,8 @@ Mode d'emploi complet : [`guide-installation.md`](guide-installation.md).
 1. Au premier lancement, une fenêtre claude.ai s'ouvre (moteur Edge WebView2, comme un navigateur). Connectez-vous une fois, puis fermez-la : elle se cache, l'application continue.
 2. Toutes les 5 minutes, l'application lit votre utilisation sur claude.ai, comme le fait la page *Paramètres > Utilisation*.
 3. L'étoile affiche le pourcentage le plus élevé : vert < 50 %, orange 50-84 %, rouge ≥ 85 %, gris si pas de chiffres depuis 20 min.
-4. Clic droit : actualiser, afficher la fenêtre claude.ai, diagnostic des tokens, lancer au démarrage de Windows, quitter.
-5. **Diagnostic des tokens** (optionnel) : lance [diag run](https://github.com/Francoisnollet/diagrun), l'outil de François Nollet (Diagrun), qui analyse en local vos sessions Claude Code et ouvre un rapport dans le navigateur. Nécessite [Node 18+](https://nodejs.org/) ; à la première utilisation, `npx` télécharge l'outil depuis npm.
+4. Clic droit : actualiser, afficher la fenêtre claude.ai, Diagrun, lancer au démarrage de Windows, quitter.
+5. **Diagrun : mes tokens sous la loupe** (optionnel) : analyse en local vos sessions Claude Code (dossier `.claude\projects`) et ouvre un rapport dans le navigateur : modèle trop gros pour la tâche, conversations trop longues, actions inutiles. Aucun Node à installer, aucun accès réseau. Le code est dans [`csharp/Diagnostic.cs`](csharp/Diagnostic.cs).
 
 ## Ce que fait le programme, et ce qu'il ne fait pas
 
@@ -73,7 +73,7 @@ Le paquet pour le Store (`JaugeClaude-Store.msix`) est construit automatiquement
 
 ## Crédits
 
-L'entrée « Diagnostic des tokens » du menu lance l'outil de François Nollet : [**github.com/Francoisnollet/diagrun**](https://github.com/Francoisnollet/diagrun) (Diagrun). Il est intégré à la Jauge Claude avec son accord ; la Jauge ne contient pas son code, elle se contente de le lancer. Merci à lui !
+L'entrée « Diagrun : mes tokens sous la loupe » est un **portage en C#** de [diag run](https://github.com/Francoisnollet/diagrun), l'outil de François Nollet (licence MIT), intégré avec son accord. La logique d'analyse et les textes du rapport sont les siens ; seul le langage change (JavaScript/Node vers C#) pour ne plus dépendre de Node. Merci à lui !
 
 ## Licence
 
