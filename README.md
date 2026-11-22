@@ -3,7 +3,7 @@
 Petite application Windows qui affiche en permanence votre consommation Claude (session 5 h et semaine) près de l'horloge, avec une notification à 50 % et 85 %.
 
 - **Un seul fichier** `JaugeClaude.exe` (moins de 1 Mo), sans installation ni dépendance : Windows 10/11 contient déjà tout (.NET Framework 4.8 et Edge WebView2).
-- **Code source complet et lisible** dans [`csharp/Program.cs`](csharp/Program.cs) (un seul fichier d'environ 400 lignes, commenté en français).
+- **Code source complet et lisible** dans [`csharp/Program.cs`](csharp/Program.cs) (environ 450 lignes, commenté en français) et [`csharp/Diagnostic.cs`](csharp/Diagnostic.cs) (le diagnostic, voir plus bas).
 - **Construit en public** par GitHub Actions : vous pouvez vérifier que le `.exe` téléchargé vient bien de ce code (voir plus bas).
 
 ## Télécharger
@@ -17,7 +17,17 @@ Mode d'emploi complet : [`guide-installation.md`](guide-installation.md).
 1. Au premier lancement, une fenêtre claude.ai s'ouvre (moteur Edge WebView2, comme un navigateur). Connectez-vous une fois, puis fermez-la : elle se cache, l'application continue.
 2. Toutes les 5 minutes, l'application lit votre utilisation sur claude.ai, comme le fait la page *Paramètres > Utilisation*.
 3. L'étoile affiche le pourcentage le plus élevé : vert < 50 %, orange 50-84 %, rouge ≥ 85 %, gris si pas de chiffres depuis 20 min.
-4. Clic droit : actualiser, afficher la fenêtre claude.ai, lancer au démarrage de Windows, quitter.
+4. Clic droit : actualiser, **diagnostic de consommation**, afficher la fenêtre claude.ai, lancer au démarrage de Windows, quitter.
+
+## Diagnostic : où partent mes tokens ?
+
+Clic droit > **Diagnostic : où partent mes tokens ?** : la jauge lit les sessions Claude Code enregistrées sur votre ordinateur (`%USERPROFILE%\.claude\projects`), puis ouvre dans votre navigateur un rapport en langage simple : tâches faites avec un modèle plus gros que nécessaire, coût des conversations trop longues, fichiers relus ou commandes répétées, économie estimée si vous suivez les conseils.
+
+- **Uniquement quand vous cliquez.** Rien n'est lu en arrière-plan.
+- **100 % local** : rien n'est envoyé, le rapport est un fichier HTML temporaire (`%TEMP%\JaugeClaude-diagnostic.html`). Il peut montrer le début de vos demandes et des chemins de fichiers : relisez-le avant d'en partager une capture.
+- Ne voit que les sessions que Claude Code a conservées (30 jours par défaut).
+- Sessions Claude Code uniquement (pas claude.ai dans le navigateur).
+- Portage en C# de [diag run](https://github.com/Francoisnollet/diagrun) de François Nollet (licence MIT), voir [`csharp/Diagnostic.cs`](csharp/Diagnostic.cs).
 
 ## Ce que fait le programme, et ce qu'il ne fait pas
 
@@ -26,9 +36,10 @@ Tout est vérifiable dans [`csharp/Program.cs`](csharp/Program.cs).
 | Il fait | Il ne fait pas |
 | --- | --- |
 | Ouvre `https://claude.ai/settings/usage` dans sa fenêtre intégrée | Ne contacte aucun autre site (pas de statistiques, pas de serveur tiers) |
-| Lit `/api/organizations` et `/api/organizations/<id>/usage` sur claude.ai | Ne lit ni vos conversations ni vos fichiers |
+| Lit `/api/organizations` et `/api/organizations/<id>/usage` sur claude.ai | Ne lit ni vos conversations claude.ai ni vos fichiers, sauf le diagnostic ci-dessous (lecture locale, à votre demande) |
 | Garde la session de sa fenêtre et ses réglages dans `%APPDATA%\JaugeClaude` | Ne stocke aucun mot de passe lui-même, n'ouvre aucun port réseau |
 | Ajoute une ligne « JaugeClaude » dans `HKCU\...\CurrentVersion\Run` (démarrage auto, désactivable) | Ne demande pas de droits administrateur, ne modifie rien d'autre |
+| Sur demande (menu Diagnostic), lit `%USERPROFILE%\.claude\projects\**\*.jsonl` et écrit un rapport dans `%TEMP%` | Ne l'envoie nulle part |
 | Extrait `WebView2Loader.dll` (composant officiel Microsoft) dans `%APPDATA%\JaugeClaude\bin` | N'installe ni service ni pilote |
 
 Les seuls composants externes sont ceux de Microsoft : le paquet NuGet officiel [`Microsoft.Web.WebView2`](https://www.nuget.org/packages/Microsoft.Web.WebView2), embarqué dans le `.exe` pour qu'il reste un seul fichier.

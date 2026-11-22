@@ -4,7 +4,8 @@
 // - Toutes les 5 min : lecture de l'utilisation (session 5 h et semaine).
 // - Pastille dans la zone de notification : pourcentage le plus élevé, vert / orange / rouge,
 //   gris si pas de chiffres depuis 20 min. Notification à 50 % et 85 %.
-// - Clic droit : actualiser, afficher la fenêtre claude.ai, lancer au démarrage, quitter.
+// - Clic droit : actualiser, diagnostic de consommation (Diagnostic.cs), afficher la fenêtre claude.ai,
+//   lancer au démarrage, quitter.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +19,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -233,7 +235,7 @@ namespace JaugeClaude
         readonly Form fenetre;
         readonly Microsoft.Web.WebView2.WinForms.WebView2 vue;
         readonly System.Windows.Forms.Timer minuteur;
-        readonly ToolStripMenuItem lSession, lSemaine, mDemarrage;
+        readonly ToolStripMenuItem lSession, lSemaine, mDemarrage, mDiagnostic;
         Mesure session, semaine;
         DateTime recu = DateTime.MinValue, dernierReleve = DateTime.MinValue;
         string erreur;
@@ -246,6 +248,7 @@ namespace JaugeClaude
             bool store = Outils.EnPaquet();
             if (!store) PremierReglageDemarrage();
 
+            mDiagnostic = new ToolStripMenuItem("Diagnostic : où partent mes tokens ?", null, (s, e) => Diagnostiquer());
             lSession = new ToolStripMenuItem { Enabled = false };
             lSemaine = new ToolStripMenuItem { Enabled = false };
             mDemarrage = new ToolStripMenuItem("Lancer au démarrage de Windows", null,
@@ -256,6 +259,7 @@ namespace JaugeClaude
                 lSession, lSemaine, new ToolStripSeparator(),
                 new ToolStripMenuItem("Ouvrir la page Utilisation", null, (s, e) => OuvrirUsage()) { Font = new Font(menu.Font, FontStyle.Bold) },
                 new ToolStripMenuItem("Actualiser maintenant", null, (s, e) => Releve()),
+                mDiagnostic,
                 new ToolStripMenuItem("Afficher la fenêtre claude.ai (connexion)", null, (s, e) => Montrer()),
                 mDemarrage,
                 new ToolStripSeparator(),
@@ -414,6 +418,27 @@ namespace JaugeClaude
         }
 
         static void OuvrirUsage() => Process.Start(UrlUsage);
+
+        /// <summary>Diagnostic « diag run » : lit les sessions Claude Code locales, ouvre le rapport dans le navigateur.</summary>
+        async void Diagnostiquer()
+        {
+            mDiagnostic.Enabled = false;
+            try
+            {
+                var rapport = await Task.Run(() => Diagnostic.Generer());
+                if (rapport == null)
+                    icone.ShowBalloonTip(10_000, "Diagnostic Claude Code",
+                        "Aucune session Claude Code trouvée sur les 30 derniers jours dans " + Diagnostic.DossierSessions + ".", ToolTipIcon.Info);
+                else
+                    Process.Start(new ProcessStartInfo(rapport) { UseShellExecute = true });
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Le diagnostic n'a pas pu être généré :\n" + e.Message, "Jauge Claude",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            finally { mDiagnostic.Enabled = true; }
+        }
 
         void Quitter()
         {
