@@ -257,6 +257,8 @@ namespace JaugeClaude
                 new ToolStripMenuItem("Ouvrir la page Utilisation", null, (s, e) => OuvrirUsage()) { Font = new Font(menu.Font, FontStyle.Bold) },
                 new ToolStripMenuItem("Actualiser maintenant", null, (s, e) => Releve()),
                 new ToolStripMenuItem("Afficher la fenêtre claude.ai (connexion)", null, (s, e) => Montrer()),
+                new ToolStripMenuItem("Diagnostic des tokens (diag run, par Diagrun)", null, (s, e) => LancerDiagnostic())
+                    { ToolTipText = "Outil créé par François Nollet (github.com/Francoisnollet/diagrun). Analyse en local vos sessions Claude Code. Nécessite Node 18+." },
                 mDemarrage,
                 new ToolStripSeparator(),
                 new ToolStripMenuItem("Quitter", null, (s, e) => Quitter()),
@@ -414,6 +416,29 @@ namespace JaugeClaude
         }
 
         static void OuvrirUsage() => Process.Start(UrlUsage);
+
+        // Diagnostic : lance l'outil « diag run » de François Nollet (MIT), https://github.com/Francoisnollet/diagrun
+        // Il lit en local les sessions Claude Code et ouvre un rapport dans le navigateur. Nécessite Node 18+.
+        static void LancerDiagnostic()
+        {
+            try
+            {
+                var p = Process.Start(new ProcessStartInfo("cmd.exe", "/c npx --yes diagrun@latest")
+                { UseShellExecute = false, CreateNoWindow = true });
+                p.EnableRaisingEvents = true;
+                p.Exited += (s, e) =>
+                {
+                    if (p.ExitCode != 0) AvertirDiagnostic();
+                };
+            }
+            catch (Exception) { AvertirDiagnostic(); }
+        }
+
+        static void AvertirDiagnostic()
+        {
+            MessageBox.Show("L'outil de diagnostic n'a pas pu se lancer.\r\nIl nécessite Node 18 ou plus récent (nodejs.org) et une connexion internet au premier lancement.",
+                            "Jauge Claude", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
         void Quitter()
         {

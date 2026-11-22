@@ -17,7 +17,8 @@ Mode d'emploi complet : [`guide-installation.md`](guide-installation.md).
 1. Au premier lancement, une fenêtre claude.ai s'ouvre (moteur Edge WebView2, comme un navigateur). Connectez-vous une fois, puis fermez-la : elle se cache, l'application continue.
 2. Toutes les 5 minutes, l'application lit votre utilisation sur claude.ai, comme le fait la page *Paramètres > Utilisation*.
 3. L'étoile affiche le pourcentage le plus élevé : vert < 50 %, orange 50-84 %, rouge ≥ 85 %, gris si pas de chiffres depuis 20 min.
-4. Clic droit : actualiser, afficher la fenêtre claude.ai, lancer au démarrage de Windows, quitter.
+4. Clic droit : actualiser, afficher la fenêtre claude.ai, diagnostic des tokens, lancer au démarrage de Windows, quitter.
+5. **Diagnostic des tokens** (optionnel) : lance [diag run](https://github.com/Francoisnollet/diagrun), l'outil de François Nollet (Diagrun), qui analyse en local vos sessions Claude Code et ouvre un rapport dans le navigateur. Nécessite [Node 18+](https://nodejs.org/) ; à la première utilisation, `npx` télécharge l'outil depuis npm.
 
 ## Ce que fait le programme, et ce qu'il ne fait pas
 
@@ -72,7 +73,7 @@ Le paquet pour le Store (`JaugeClaude-Store.msix`) est construit automatiquement
 
 ## Crédits
 
-L'outil de diagnostic est l'œuvre de François Nollet : [**github.com/Francoisnollet/diagrun**](https://github.com/Francoisnollet/diagrun) (Diagrun). Il est intégré à la Jauge Claude avec son accord. Merci à lui !
+L'entrée « Diagnostic des tokens » du menu lance l'outil de François Nollet : [**github.com/Francoisnollet/diagrun**](https://github.com/Francoisnollet/diagrun) (Diagrun). Il est intégré à la Jauge Claude avec son accord ; la Jauge ne contient pas son code, elle se contente de le lancer. Merci à lui !
 
 ## Licence
 
